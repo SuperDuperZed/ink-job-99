@@ -1,0 +1,10 @@
+{
+  "name": "ink-job-99",
+  "version": "1.0.0",
+  "description": "INK JOB '99 — An 8-bit money printing arcade game",
+  "scripts": {
+    "build": "bun build src/game.ts --outfile dist/game.js --target browser",
+    "dev": "bun run src/game.ts"
+  },
+  "private": true
+}

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>INK JOB '99 — The Money Printing Arcade Game</title>
+  <style>
+    /* ─── Late 90s Web Aesthetic ─── */
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0a;
+      background-image:
+        radial-gradient(ellipse at 50% 30%, rgba(0, 180, 65, 0.06) 0%, transparent 70%);
+      color: #c0c0c0;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      image-rendering: pixelated;
+    }
+
+    /* ─── CRT Monitor Frame ─── */
+    .crt-frame {
+      position: relative;
+      padding: 20px;
+      background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+      border-radius: 18px;
+      box-shadow:
+        0 0 0 3px #333,
+        0 0 0 5px #111,
+        0 0 60px rgba(0, 255, 0, 0.08),
+        0 0 120px rgba(0, 255, 0, 0.04),
+        inset 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ─── CRT Bezel ─── */
+    .crt-frame::before {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px; right: 4px; bottom: 4px;
+      border: 2px solid #222;
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    /* ─── Screen Container ─── */
+    .screen {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow:
+        0 0 20px rgba(0, 255, 0, 0.1),
+        inset 0 0 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ─── Game Canvas ─── */
+    #game {
+      display: block;
+      width: 640px;
+      height: 480px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      background: #000;
+    }
+
+    /* ─── CRT Scanline Overlay ─── */
+    .screen::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.12) 0px,
+        rgba(0, 0, 0, 0.12) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ─── CRT Flicker ─── */
+    .screen::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 255, 0, 0.015);
+      pointer-events: none;
+      z-index: 11;
+      animation: flicker 0.1s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.97; }
+      100% { opacity: 1; }
+    }
+
+    /* ─── Power LED ─── */
+    .led {
+      position: absolute;
+      bottom: 6px;
+      right: 30px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00ff00;
+      box-shadow: 0 0 6px #00ff00, 0 0 12px rgba(0, 255, 0, 0.4);
+      animation: led-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes led-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* ─── Brand Label ─── */
+    .brand {
+      position: absolute;
+      bottom: 5px;
+      left: 30px;
+      font-size: 5px;
+      color: #444;
+      letter-spacing: 2px;
+    }
+
+    /* ─── Info Section ─── */
+    .info {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 8px;
+      line-height: 2;
+      color: #555;
+    }
+
+    .info a {
+      color: #00b341;
+      text-decoration: none;
+    }
+
+    .info a:hover {
+      color: #7cfc00;
+      text-decoration: underline;
+    }
+
+    /* ─── Marquee — because it's 1999 ─── */
+    .marquee-bar {
+      margin-top: 12px;
+      width: 640px;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 7px;
+      color: #00b341;
+    }
+
+    .marquee-bar span {
+      display: inline-block;
+      animation: marquee 20s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ─── Visitor Counter (joke) ─── */
+    .visitor-counter {
+      margin-top: 8px;
+      font-size: 7px;
+      color: #444;
+    }
+
+    .visitor-counter img {
+      image-rendering: pixelated;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 700px) {
+      .crt-frame { padding: 8px; border-radius: 10px; }
+      #game { width: 320px; height: 240px; }
+      .info, .marquee-bar { width: 320px; font-size: 6px; }
+    }
+
+    @media (max-height: 600px) {
+      .crt-frame { padding: 8px; }
+      #game { width: 480px; height: 360px; }
+      .info, .marquee-bar { width: 480px; }
+    }
+
+    /* ─── "Under Construction" GIF vibe ─── */
+    .construction {
+      margin-top: 8px;
+      font-size: 8px;
+      animation: blink-text 1s step-end infinite;
+      color: #ff8c00;
+    }
+
+    @keyframes blink-text {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Game -->
+  <div class="crt-frame">
+    <div class="screen">
+      <canvas id="game"></canvas>
+    </div>
+    <div class="led"></div>
+    <div class="brand">SUPERDUPERZED &bull; SYNAPSE</div>
+  </div>
+
+  <!-- Nostalgia Info -->
+  <div class="info">
+    <div>ARROWS / WASD : MOVE &nbsp;&nbsp; P : PAUSE &nbsp;&nbsp; TOUCH : TAP LEFT/RIGHT</div>
+    <div style="margin-top: 4px;">
+      BEST VIEWED IN <span style="color:#00b341;">NETSCAPE NAVIGATOR 4.0</span> AT 800x600
+    </div>
+    <div style="margin-top: 8px;">
+      <a href="https://github.com/SuperDuperZed/ink-job-99" target="_blank">VIEW SOURCE ON GITHUB</a>
+      &nbsp;|&nbsp;
+      <span style="color:#666;">v1.0.0 RELEASED 1999</span>
+    </div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="marquee-bar">
+    <span>
+      ★ CATCH BILLS TO SCORE POINTS ★ AVOID INK SPLATS AND PAPER JAMS ★ COLLECT POWER-UPS ★ WATCH OUT FOR FED RAIDS AT LEVEL 5+ ★ BUILD COMBOS FOR BONUS MULTIPLIER ★ YOU ARE INKY — THE GREATEST COUNTERFEITER ★ THIS GAME IS 100% FICTIONAL AND FOR ENTERTAINMENT PURPOSES ONLY ★ INK JOB '99 — PRINT MONEY, NOT MEMORIES ★
+    </span>
+  </div>
+
+  <!-- Construction zone -->
+  <div class="construction">
+    🚧 MORE FEATURES COMING SOON 🚧
+  </div>
+
+  <!-- Visitor counter -->
+  <div class="visitor-counter">
+    VISITORS: <span id="visitors">008472</span>
+  </div>
+
+  <!-- Game Script -->
+  <script src="game.js"></script>
+
+  <script>
+    // Fake visitor counter — updates with a random increment on each load
+    (function() {
+      const base = 8472;
+      const increment = Math.floor(Math.random() * 50);
+      document.getElementById('visitors').textContent =
+        String(base + increment).padStart(6, '0');
+    })();
+  </script>
+
+</body>
+</html>
