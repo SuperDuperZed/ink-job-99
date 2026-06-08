@@ -586,8 +586,15 @@ document.addEventListener('keydown',e=>{keys.add(e.key);if(['ArrowUp','ArrowDown
 document.addEventListener('keyup',e=>keys.delete(e.key))
 
 function setupTouch(cv:HTMLCanvasElement){
-  cv.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0],r=cv.getBoundingClientRect();touchX=(t.clientX-r.left)/r.width*W;touchY=(t.clientY-r.top)/r.height*H},{passive:false})
-  cv.addEventListener('touchend',e=>{e.preventDefault();touchX=-1;touchY=-1},{passive:false})
+  const updateTouch=(e:TouchEvent)=>{
+    const t=e.touches[0],r=cv.getBoundingClientRect()
+    touchX=(t.clientX-r.left)/r.width*W;touchY=(t.clientY-r.top)/r.height*H
+  }
+  const clearTouch=(e:TouchEvent)=>{e.preventDefault();touchX=-1;touchY=-1}
+  cv.addEventListener('touchstart',e=>{e.preventDefault();updateTouch(e)},{passive:false})
+  cv.addEventListener('touchmove',e=>{e.preventDefault();if(e.touches.length>0)updateTouch(e)},{passive:false})
+  cv.addEventListener('touchend',clearTouch,{passive:false})
+  cv.addEventListener('touchcancel',clearTouch,{passive:false})
 }
 
 function justPressed(key:string):boolean{if(keys.has(key)){keys.delete(key);return true}return false}
@@ -1768,7 +1775,11 @@ function init(){
       startBGM()
     }catch{g=newGame()}
   }else{g=newGame()}
-  setupTouch(canvas);lastTime=performance.now();requestAnimationFrame(loop)
+  setupTouch(canvas)
+  canvas.focus()
+  // Clear all keys when window loses focus to prevent stuck input
+  window.addEventListener('blur',()=>keys.clear())
+  lastTime=performance.now();requestAnimationFrame(loop)
 }
 
 function loop(time:number){

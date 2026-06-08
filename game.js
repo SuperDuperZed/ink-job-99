@@ -803,17 +803,27 @@ document.addEventListener("keydown", (e) => {
 });
 document.addEventListener("keyup", (e) => keys.delete(e.key));
 function setupTouch(cv) {
-  cv.addEventListener("touchstart", (e) => {
-    e.preventDefault();
+  const updateTouch = (e) => {
     const t = e.touches[0], r = cv.getBoundingClientRect();
     touchX = (t.clientX - r.left) / r.width * W;
     touchY = (t.clientY - r.top) / r.height * H;
-  }, { passive: false });
-  cv.addEventListener("touchend", (e) => {
+  };
+  const clearTouch = (e) => {
     e.preventDefault();
     touchX = -1;
     touchY = -1;
+  };
+  cv.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    updateTouch(e);
   }, { passive: false });
+  cv.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    if (e.touches.length > 0)
+      updateTouch(e);
+  }, { passive: false });
+  cv.addEventListener("touchend", clearTouch, { passive: false });
+  cv.addEventListener("touchcancel", clearTouch, { passive: false });
 }
 function justPressed(key) {
   if (keys.has(key)) {
@@ -2237,6 +2247,8 @@ function init() {
     g = newGame();
   }
   setupTouch(canvas);
+  canvas.focus();
+  window.addEventListener("blur", () => keys.clear());
   lastTime = performance.now();
   requestAnimationFrame(loop);
 }
