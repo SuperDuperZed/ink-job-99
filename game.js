@@ -794,14 +794,26 @@ function stopBGM() {
   }
 }
 var keys = new Set;
+var pendingDown = [];
+var pendingUp = [];
 var touchX = -1;
 var touchY = -1;
 document.addEventListener("keydown", (e) => {
-  keys.add(e.key);
+  pendingDown.push(e.key);
   if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key))
     e.preventDefault();
 });
-document.addEventListener("keyup", (e) => keys.delete(e.key));
+document.addEventListener("keyup", (e) => {
+  pendingUp.push(e.key);
+});
+function flushInput() {
+  for (const k of pendingDown)
+    keys.add(k);
+  for (const k of pendingUp)
+    keys.delete(k);
+  pendingDown.length = 0;
+  pendingUp.length = 0;
+}
 function setupTouch(cv) {
   const updateTouch = (e) => {
     const t = e.touches[0], r = cv.getBoundingClientRect();
@@ -2248,13 +2260,18 @@ function init() {
   }
   setupTouch(canvas);
   canvas.focus();
-  window.addEventListener("blur", () => keys.clear());
+  window.addEventListener("blur", () => {
+    keys.clear();
+    pendingDown.length = 0;
+    pendingUp.length = 0;
+  });
   lastTime = performance.now();
   requestAnimationFrame(loop);
 }
 function loop(time) {
   const dt = Math.min((time - lastTime) / 1000, 1 / 20);
   lastTime = time;
+  flushInput();
   g.titleBlink += dt;
   switch (g.screen) {
     case "title":

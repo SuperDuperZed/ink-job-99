@@ -581,9 +581,16 @@ function stopBGM(){if(bgmInterval){clearInterval(bgmInterval);bgmInterval=null}}
 // ─── Input System ────────────────────────────────────────────
 
 const keys=new Set<string>()
+const pendingDown: string[]=[]
+const pendingUp: string[]=[]
 let touchX=-1,touchY=-1
-document.addEventListener('keydown',e=>{keys.add(e.key);if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault()})
-document.addEventListener('keyup',e=>keys.delete(e.key))
+document.addEventListener('keydown',e=>{pendingDown.push(e.key);if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault()})
+document.addEventListener('keyup',e=>{pendingUp.push(e.key)})
+function flushInput(){
+  for(const k of pendingDown)keys.add(k)
+  for(const k of pendingUp)keys.delete(k)
+  pendingDown.length=0;pendingUp.length=0
+}
 
 function setupTouch(cv:HTMLCanvasElement){
   const updateTouch=(e:TouchEvent)=>{
@@ -1778,13 +1785,13 @@ function init(){
   setupTouch(canvas)
   canvas.focus()
   // Clear all keys when window loses focus to prevent stuck input
-  window.addEventListener('blur',()=>keys.clear())
+  window.addEventListener('blur',()=>{keys.clear();pendingDown.length=0;pendingUp.length=0})
   lastTime=performance.now();requestAnimationFrame(loop)
 }
 
 function loop(time:number){
   const dt=Math.min((time-lastTime)/1000,1/20);lastTime=time
-  g.titleBlink+=dt
+  flushInput();g.titleBlink+=dt
 
   switch(g.screen){
     case 'title':
