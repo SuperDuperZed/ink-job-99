@@ -978,7 +978,7 @@ function getTile(x, y) {
 }
 function isBlocked(x, y) {
   const t = getTile(x, y);
-  if ("WT~BCFXR".includes(t))
+  if ("WT~BCFX".includes(t))
     return true;
   for (const n of g.npcs) {
     if (Math.floor(n.x / TILE) === x && Math.floor(n.y / TILE) === y)

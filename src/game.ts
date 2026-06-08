@@ -746,7 +746,7 @@ function getTile(x:number,y:number):string{
 
 function isBlocked(x:number,y:number):boolean{
   const t=getTile(x,y)
-  if('WT~BCFXR'.includes(t))return true
+  if('WT~BCFX'.includes(t))return true
   // Check NPCs
   for(const n of g.npcs){
     if(Math.floor(n.x/TILE)===x&&Math.floor(n.y/TILE)===y)return true
