@@ -605,10 +605,10 @@ function setupTouch(cv:HTMLCanvasElement){
 }
 
 function justPressed(key:string):boolean{if(keys.has(key)){keys.delete(key);return true}return false}
-function upHeld():boolean{return keys.has('ArrowUp')||keys.has('w')||keys.has('W')||touchY<H*0.33}
-function downHeld():boolean{return keys.has('ArrowDown')||keys.has('s')||keys.has('S')||touchY>H*0.66}
-function leftHeld():boolean{return keys.has('ArrowLeft')||keys.has('a')||keys.has('A')||touchX<W*0.33}
-function rightHeld():boolean{return keys.has('ArrowRight')||keys.has('d')||keys.has('D')||touchX>W*0.66}
+function upHeld():boolean{return keys.has('ArrowUp')||keys.has('w')||keys.has('W')||(touchY>=0&&touchY<H*0.33)}
+function downHeld():boolean{return keys.has('ArrowDown')||keys.has('s')||keys.has('S')||(touchY>=0&&touchY>H*0.66)}
+function leftHeld():boolean{return keys.has('ArrowLeft')||keys.has('a')||keys.has('A')||(touchX>=0&&touchX<W*0.33)}
+function rightHeld():boolean{return keys.has('ArrowRight')||keys.has('d')||keys.has('D')||(touchX>=0&&touchX>W*0.66)}
 function actionPressed():boolean{return justPressed(' ')||justPressed('Enter')}
 function cancelPressed():boolean{return justPressed('Escape')||justPressed('Backspace')}
 
