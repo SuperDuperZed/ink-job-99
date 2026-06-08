@@ -1,4 +1,4 @@
-// ink-job-99/src/game.ts
+// src/game.ts
 var W = 320;
 var H = 240;
 var TILE = 16;
@@ -940,11 +940,12 @@ function newGame() {
   const party = [createPrinter("dripdrop", "DripDrop", 5)];
   return {
     screen: "title",
-    px: 17 * TILE,
-    py: 6 * TILE,
+    px: 11 * TILE,
+    py: 10 * TILE,
     pdir: 0,
     money: 500,
     stepCount: 0,
+    bumpTimer: 0,
     party,
     inventory: { inkRefill: 3, speedOil: 1 },
     npcs: makeNpcs(),
@@ -1070,6 +1071,8 @@ function updateOverworld(dt) {
           startBattle(wild, false);
           return;
         }
+      } else {
+        g.bumpTimer = 0.12;
       }
     }
   } else {
@@ -1093,6 +1096,8 @@ function updateOverworld(dt) {
   g.camY = clamp(g.camY, 0, MAP_H * TILE - H);
   if (g.notifTimer > 0)
     g.notifTimer -= dt;
+  if (g.bumpTimer > 0)
+    g.bumpTimer -= dt;
   updateParticles(dt);
 }
 function interactNpc(npc) {
@@ -1782,7 +1787,10 @@ function renderOverworld() {
   }
   const dirSprites = ["player_down", "player_up", "player_left", "player_right"];
   const pSprite = getSprite(dirSprites[g.pdir]);
-  ctx.drawImage(pSprite, Math.floor(g.px), Math.floor(g.py));
+  const bumpOff = g.bumpTimer > 0 ? 1 : 0;
+  const bdx = g.pdir === 2 ? -bumpOff : g.pdir === 3 ? bumpOff : 0;
+  const bdy = g.pdir === 1 ? -bumpOff : g.pdir === 0 ? bumpOff : 0;
+  ctx.drawImage(pSprite, Math.floor(g.px) + bdx, Math.floor(g.py) + bdy);
   drawParticles(ctx);
   ctx.restore();
   renderOverworldHUD();

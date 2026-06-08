@@ -687,7 +687,7 @@ interface GameData{
   screen:GameScreen
   // Player
   px:number;py:number;pdir:number
-  money:number;stepCount:number
+  money:number;stepCount:number,bumpTimer:number
   party:Printer[]
   inventory:Record<string,number>
   // NPCs
@@ -724,8 +724,9 @@ function newGame():GameData{
   const party=[createPrinter('dripdrop','DripDrop',5)]
   return{
     screen:'title',
-    px:17*TILE,py:6*TILE,pdir:0,
-    money:500,stepCount:0,party,inventory:{inkRefill:3,speedOil:1},
+    px:11*TILE,py:10*TILE,pdir:0,
+    money:500,stepCount:0,
+    bumpTimer:0,party,inventory:{inkRefill:3,speedOil:1},
     npcs:makeNpcs(),npcDefeated:{},fedBossDefeated:false,
     camX:0,camY:0,walkFrame:0,walkTimer:0,
     battle:null,dialog:null,
@@ -843,6 +844,8 @@ function updateOverworld(dt:number){
           startBattle(wild,false)
           return
         }
+      }else{
+        g.bumpTimer=0.12
       }
     }
   }else{
@@ -870,6 +873,7 @@ function updateOverworld(dt:number){
 
   // Notification timer
   if(g.notifTimer>0)g.notifTimer-=dt
+  if(g.bumpTimer>0)g.bumpTimer-=dt
 
   updateParticles(dt)
 }
@@ -1394,7 +1398,11 @@ function renderOverworld(){
   // Draw player
   const dirSprites=['player_down','player_up','player_left','player_right']
   const pSprite=getSprite(dirSprites[g.pdir])
-  ctx.drawImage(pSprite,Math.floor(g.px),Math.floor(g.py))
+  // Bump offset when hitting a wall
+    const bumpOff=g.bumpTimer>0?1:0
+    const bdx=g.pdir===2?-bumpOff:g.pdir===3?bumpOff:0
+    const bdy=g.pdir===1?-bumpOff:g.pdir===0?bumpOff:0
+    ctx.drawImage(pSprite,Math.floor(g.px)+bdx,Math.floor(g.py)+bdy)
 
   // Particles
   drawParticles(ctx)
