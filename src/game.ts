@@ -1512,31 +1512,31 @@ function renderBattle(){
 
   // Enemy HP bar
   const ehx=140,ehy=20
-  ctx.fillStyle=C.white;font='bold 6px monospace';ctx.textAlign='left'
+  ctx.fillStyle=C.white;ctx.font='bold 6px monospace';ctx.textAlign='left'
   ctx.fillText(`${b.enemy.printer.nickname} Lv${b.enemy.printer.level}`,ehx,ehy)
   ctx.fillStyle=C.dkGray;ctx.fillRect(ehx,ehy+3,100,5)
   const eHpRatio=b.enemy.printer.hp/b.enemy.printer.maxHp
   ctx.fillStyle=eHpRatio>0.5?C.green:eHpRatio>0.2?C.orange:C.red
   ctx.fillRect(ehx,ehy+3,Math.floor(100*eHpRatio),5)
-  ctx.fillStyle=C.white;font='5px monospace'
+  ctx.fillStyle=C.white;ctx.font='5px monospace'
   ctx.fillText(`${b.enemy.printer.hp}/${b.enemy.printer.maxHp}`,ehx+60,ehy+18)
   // Type badge
   ctx.fillStyle=typeColor(b.enemy.printer);ctx.fillRect(ehx+104,ehy+3,30,5)
-  ctx.fillStyle=C.white;font='4px monospace';ctx.textAlign='center'
+  ctx.fillStyle=C.white;ctx.font='4px monospace';ctx.textAlign='center'
   ctx.fillText(b.enemy.printer.defId.toUpperCase().slice(0,3),ehx+119,ehy+8)
 
   // Player HP bar
   const phx=10,phy=100
-  ctx.fillStyle=C.white;font='bold 6px monospace';ctx.textAlign='left'
+  ctx.fillStyle=C.white;ctx.font='bold 6px monospace';ctx.textAlign='left'
   ctx.fillText(`${b.player.printer.nickname} Lv${b.player.printer.level}`,phx,phy)
   ctx.fillStyle=C.dkGray;ctx.fillRect(phx,phy+3,100,5)
   const pHpRatio=b.player.printer.hp/b.player.printer.maxHp
   ctx.fillStyle=pHpRatio>0.5?C.green:pHpRatio>0.2?C.orange:C.red
   ctx.fillRect(phx,phy+3,Math.floor(100*pHpRatio),5)
-  ctx.fillStyle=C.white;font='5px monospace'
+  ctx.fillStyle=C.white;ctx.font='5px monospace'
   ctx.fillText(`${b.player.printer.hp}/${b.player.printer.maxHp}`,phx+60,phy+18)
   ctx.fillStyle=typeColor(b.player.printer);ctx.fillRect(phx+104,phy+3,30,5)
-  ctx.fillStyle=C.white;font='4px monospace';ctx.textAlign='center'
+  ctx.fillStyle=C.white;ctx.font='4px monospace';ctx.textAlign='center'
   ctx.fillText(b.player.printer.defId.toUpperCase().slice(0,3),phx+119,phy+8)
 
   // XP bar
@@ -1551,7 +1551,7 @@ function renderBattle(){
   if(b.phase==='playerTurn'){
     ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(W-80,H-50,76,46)
     ctx.strokeStyle=C.gold;ctx.lineWidth=1;ctx.strokeRect(W-80,H-50,76,46)
-    ctx.fillStyle=C.white;font='bold 6px monospace';ctx.textAlign='left'
+    ctx.fillStyle=C.white;ctx.font='bold 6px monospace';ctx.textAlign='left'
     const labels=['FIGHT','ITEMS','RUN']
     for(let i=0;i<3;i++){
       ctx.fillStyle=i===g.menuCursor?C.gold:C.white
@@ -1572,7 +1572,7 @@ function renderBattle(){
       ctx.fillStyle=sel?C.gold:C.white
       const col=i<2?0:1;const row=i%2
       ctx.fillText(`${sel?'>':' '}${md.name}`,8+col*155,H-38+row*18)
-      ctx.fillStyle=C.gray;font='5px monospace'
+      ctx.fillStyle=C.gray;ctx.font='5px monospace'
       ctx.fillText(`PP:${moves[i].pp}/${md.maxPp}`,8+col*155,H-30+row*18)
       // Type color indicator
       ctx.fillStyle=typeColorForType(md.type)
@@ -1598,7 +1598,7 @@ function renderBattle(){
 function drawTextBox(lines:string[]){
   ctx.fillStyle='rgba(0,0,0,0.85)';ctx.fillRect(4,H-52,W-8,48)
   ctx.strokeStyle=C.ltGray;ctx.lineWidth=1;ctx.strokeRect(4,H-52,W-8,48)
-  ctx.fillStyle=C.white;font='6px monospace';ctx.textAlign='left'
+  ctx.fillStyle=C.white;ctx.font='6px monospace';ctx.textAlign='left'
   for(let i=0;i<Math.min(lines.length,3);i++){
     ctx.fillText(lines[i],12,H-38+i*14)
   }
@@ -1627,9 +1627,9 @@ function renderShop(){
   ctx.fillStyle='rgba(0,0,0,0.85)';ctx.fillRect(20,15,W-40,H-30)
   ctx.strokeStyle=C.gold;ctx.lineWidth=1;ctx.strokeRect(20,15,W-40,H-30)
 
-  ctx.fillStyle=C.gold;font='bold 8px monospace';ctx.textAlign='center'
+  ctx.fillStyle=C.gold;ctx.font='bold 8px monospace';ctx.textAlign='center'
   ctx.fillText("SAL'S SUPPLY SHOP",W/2,32)
-  ctx.fillStyle=C.white;font='6px monospace'
+  ctx.fillStyle=C.white;ctx.font='6px monospace'
   ctx.fillText(`Your money: $${g.money}`,W/2,46)
 
   ctx.textAlign='left';ctx.font='6px monospace'
@@ -1655,7 +1655,7 @@ function renderDialog(){
   if(!g.dialog)return
   ctx.fillStyle='rgba(0,0,0,0.85)';ctx.fillRect(4,H-52,W-8,48)
   ctx.strokeStyle=C.ltGray;ctx.lineWidth=1;ctx.strokeRect(4,H-52,W-8,48)
-  ctx.fillStyle=C.white;font='6px monospace';ctx.textAlign='left'
+  ctx.fillStyle=C.white;ctx.font='6px monospace';ctx.textAlign='left'
   // Show current line (partially typed)
   const line=g.dialog.lines[g.dialog.idx]||''
   const visible=line.slice(0,g.dialog.charIdx)
@@ -1683,14 +1683,14 @@ function renderTitle(){
 
   const yo=Math.sin(g.titleBlink*2)*2
   // Title shadow
-  ctx.fillStyle=C.dkGreen;font='bold 18px monospace';ctx.textAlign='center'
+  ctx.fillStyle=C.dkGreen;ctx.font='bold 18px monospace';ctx.textAlign='center'
   ctx.fillText('INK JOB',W/2+1,62+yo+1)
   ctx.font='bold 24px monospace';ctx.fillText("'99",W/2+1,90+yo+1)
   // Title
-  ctx.fillStyle=C.green;font='bold 18px monospace';ctx.fillText('INK JOB',W/2,62+yo)
-  ctx.fillStyle=C.gold;font='bold 24px monospace';ctx.fillText("'99",W/2,90+yo)
+  ctx.fillStyle=C.green;ctx.font='bold 18px monospace';ctx.fillText('INK JOB',W/2,62+yo)
+  ctx.fillStyle=C.gold;ctx.font='bold 24px monospace';ctx.fillText("'99",W/2,90+yo)
   // Subtitle
-  ctx.fillStyle=C.ltGray;font='bold 7px monospace'
+  ctx.fillStyle=C.ltGray;ctx.font='bold 7px monospace'
   ctx.fillText('POKEMON-STYLE RPG EDITION',W/2,110)
 
   // Printer parade
@@ -1702,19 +1702,19 @@ function renderTitle(){
 
   // Blink start
   if(Math.floor(g.titleBlink*2.5)%2===0){
-    ctx.fillStyle=C.white;font='bold 7px monospace'
+    ctx.fillStyle=C.white;ctx.font='bold 7px monospace'
     ctx.fillText('PRESS ENTER OR TAP TO START',W/2,172)
   }
 
   // Controls
-  ctx.fillStyle=C.gray;font='5px monospace'
+  ctx.fillStyle=C.gray;ctx.font='5px monospace'
   ctx.fillText('ARROWS:MOVE  SPACE:TALK  ESC:MENU',W/2,195)
 
   // High score
-  ctx.fillStyle=C.gold;font='6px monospace'
+  ctx.fillStyle=C.gold;ctx.font='6px monospace'
   ctx.fillText(`BATTLES WON: ${g.battlesWon}`,W/2,210)
 
-  ctx.fillStyle=C.gray;font='5px monospace'
+  ctx.fillStyle=C.gray;ctx.font='5px monospace'
   ctx.fillText('BY SUPERDUPERZED',W/2,228)
 }
 
@@ -1722,13 +1722,13 @@ function renderTitle(){
 
 function renderGameOver(){
   ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(0,0,W,H)
-  ctx.fillStyle=C.red;font='bold 14px monospace';ctx.textAlign='center'
+  ctx.fillStyle=C.red;ctx.font='bold 14px monospace';ctx.textAlign='center'
   ctx.fillText('GAME OVER',W/2,70)
-  ctx.fillStyle=C.white;font='7px monospace'
+  ctx.fillStyle=C.white;ctx.font='7px monospace'
   ctx.fillText(`Printers fainted...`,W/2,100)
   ctx.fillText(`Battles won: ${g.battlesWon}`,W/2,120)
   if(Math.floor(g.titleBlink*2.5)%2===0){
-    ctx.fillStyle=C.white;font='bold 6px monospace'
+    ctx.fillStyle=C.white;ctx.font='bold 6px monospace'
     ctx.fillText('PRESS ENTER TO CONTINUE',W/2,160)
   }
 }
