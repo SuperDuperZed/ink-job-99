@@ -64,7 +64,3 @@ bun run build  # compiles src/game.ts → game.js
 ```
 
 Open `index.html` in a browser.
-
-## License
-
-MIT — but the money you print isn't real.
