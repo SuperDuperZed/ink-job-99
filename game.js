@@ -794,26 +794,16 @@ function stopBGM() {
   }
 }
 var keys = new Set;
-var pendingDown = [];
-var pendingUp = [];
+var justDown = new Set;
 var touchX = -1;
 var touchY = -1;
 document.addEventListener("keydown", (e) => {
-  pendingDown.push(e.key);
+  keys.add(e.key);
+  justDown.add(e.key);
   if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key))
     e.preventDefault();
 });
-document.addEventListener("keyup", (e) => {
-  pendingUp.push(e.key);
-});
-function flushInput() {
-  for (const k of pendingDown)
-    keys.add(k);
-  for (const k of pendingUp)
-    keys.delete(k);
-  pendingDown.length = 0;
-  pendingUp.length = 0;
-}
+document.addEventListener("keyup", (e) => keys.delete(e.key));
 function setupTouch(cv) {
   const updateTouch = (e) => {
     const t = e.touches[0], r = cv.getBoundingClientRect();
@@ -838,8 +828,8 @@ function setupTouch(cv) {
   cv.addEventListener("touchcancel", clearTouch, { passive: false });
 }
 function justPressed(key) {
-  if (keys.has(key)) {
-    keys.delete(key);
+  if (justDown.has(key)) {
+    justDown.delete(key);
     return true;
   }
   return false;
@@ -2262,8 +2252,7 @@ function init() {
   canvas.focus();
   window.addEventListener("blur", () => {
     keys.clear();
-    pendingDown.length = 0;
-    pendingUp.length = 0;
+    justDown.clear();
   });
   lastTime = performance.now();
   requestAnimationFrame(loop);
@@ -2271,7 +2260,7 @@ function init() {
 function loop(time) {
   const dt = Math.min((time - lastTime) / 1000, 1 / 20);
   lastTime = time;
-  flushInput();
+  justDown.clear();
   g.titleBlink += dt;
   switch (g.screen) {
     case "title":

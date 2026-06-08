@@ -581,16 +581,10 @@ function stopBGM(){if(bgmInterval){clearInterval(bgmInterval);bgmInterval=null}}
 // ─── Input System ────────────────────────────────────────────
 
 const keys=new Set<string>()
-const pendingDown: string[]=[]
-const pendingUp: string[]=[]
+const justDown=new Set<string>()
 let touchX=-1,touchY=-1
-document.addEventListener('keydown',e=>{pendingDown.push(e.key);if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault()})
-document.addEventListener('keyup',e=>{pendingUp.push(e.key)})
-function flushInput(){
-  for(const k of pendingDown)keys.add(k)
-  for(const k of pendingUp)keys.delete(k)
-  pendingDown.length=0;pendingUp.length=0
-}
+document.addEventListener('keydown',e=>{keys.add(e.key);justDown.add(e.key);if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault()})
+document.addEventListener('keyup',e=>keys.delete(e.key))
 
 function setupTouch(cv:HTMLCanvasElement){
   const updateTouch=(e:TouchEvent)=>{
@@ -604,7 +598,7 @@ function setupTouch(cv:HTMLCanvasElement){
   cv.addEventListener('touchcancel',clearTouch,{passive:false})
 }
 
-function justPressed(key:string):boolean{if(keys.has(key)){keys.delete(key);return true}return false}
+function justPressed(key:string):boolean{if(justDown.has(key)){justDown.delete(key);return true}return false}
 function upHeld():boolean{return keys.has('ArrowUp')||keys.has('w')||keys.has('W')||(touchY>=0&&touchY<H*0.33)}
 function downHeld():boolean{return keys.has('ArrowDown')||keys.has('s')||keys.has('S')||(touchY>=0&&touchY>H*0.66)}
 function leftHeld():boolean{return keys.has('ArrowLeft')||keys.has('a')||keys.has('A')||(touchX>=0&&touchX<W*0.33)}
@@ -1785,13 +1779,13 @@ function init(){
   setupTouch(canvas)
   canvas.focus()
   // Clear all keys when window loses focus to prevent stuck input
-  window.addEventListener('blur',()=>{keys.clear();pendingDown.length=0;pendingUp.length=0})
+  window.addEventListener('blur',()=>{keys.clear();justDown.clear()})
   lastTime=performance.now();requestAnimationFrame(loop)
 }
 
 function loop(time:number){
   const dt=Math.min((time-lastTime)/1000,1/20);lastTime=time
-  flushInput();g.titleBlink+=dt
+  justDown.clear();g.titleBlink+=dt
 
   switch(g.screen){
     case 'title':
