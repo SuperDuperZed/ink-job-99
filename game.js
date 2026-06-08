@@ -2260,7 +2260,6 @@ function init() {
 function loop(time) {
   const dt = Math.min((time - lastTime) / 1000, 1 / 20);
   lastTime = time;
-  justDown.clear();
   g.titleBlink += dt;
   switch (g.screen) {
     case "title":
@@ -2296,6 +2295,7 @@ function loop(time) {
       break;
   }
   render();
+  justDown.clear();
   requestAnimationFrame(loop);
 }
 if (document.readyState === "loading")
