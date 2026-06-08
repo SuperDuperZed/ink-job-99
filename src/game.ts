@@ -17,7 +17,7 @@ const C = {
   brown:'#8B4513',ltBrown:'#D2691E',gray:'#808080',ltGray:'#C0C0C0',
   dkGray:'#404040',cyan:'#00CED1',purple:'#6B21A8',pink:'#FF69B4',
   mint:'#98FF98',teal:'#0D9488',navy:'#0F172A',slate:'#1E293B',
-  cream:'#FFFDD0',wood:'#DEB887',brick:'#CB4335',roof:'#654321',
+  cream:'#FFFDD0',wood:'#DEB887',dkBrown:'#5C3317',brick:'#CB4335',roof:'#654321',yellow:'#FFFF00',
   water:'#1A5276',grass1:'#228B22',grass2:'#2ECC71',path:'#C4A882',
   floor:'#F5DEB3',darkFloor:'#D2B48C',wallExt:'#696969',wallInt:'#A9A9A9',
   counter:'#8B7355',door:'#4A3728',fence:'#8B4513',
